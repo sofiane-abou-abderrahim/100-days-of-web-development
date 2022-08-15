@@ -9,4 +9,4 @@ editPlayer1BtnElement.addEventListener("click", openPlayerConfig);
 editPlayer2BtnElement.addEventListener("click", openPlayerConfig);
 
 cancelConfigBtnElement.addEventListener("click", closePlayerConfig);
-// backdropElement.addEventListener("click", closePlayerConfig);
+backdropElement.addEventListener("click", closePlayerConfig);
