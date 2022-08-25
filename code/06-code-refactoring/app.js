@@ -4,6 +4,8 @@ const path = require('path');
 const express = require('express');
 const uuid = require('uuid');
 
+const resData = require('./util/restaurant-data');
+
 const app = express();
 
 app.set('views', path.join(__dirname, 'views'));
@@ -17,10 +19,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/restaurants', function (req, res) {
-  const filePath = path.join(__dirname, 'data', 'restaurants.json');
-
-  const fileData = fs.readFileSync(filePath);
-  const storedRestaurants = JSON.parse(fileData);
+  const storedRestaurants = resData.getStoredRestaurants();
 
   res.render('restaurants', {
     numberOfRestaurants: storedRestaurants.length,
@@ -30,10 +29,7 @@ app.get('/restaurants', function (req, res) {
 
 app.get('/restaurants/:id', function (req, res) {
   const restaurantId = req.params.id;
-  const filePath = path.join(__dirname, 'data', 'restaurants.json');
-
-  const fileData = fs.readFileSync(filePath);
-  const storedRestaurants = JSON.parse(fileData);
+  const storedRestaurants = resData.getStoredRestaurants();
 
   for (const restaurant of storedRestaurants) {
     if (restaurant.id === restaurantId) {
@@ -56,6 +52,8 @@ app.get('/restaurants/:id', function (req, res) {
   //     restaurant.id === restaurantId &&
   //     res.render('restaurant-detail', { restaurant })
   // );
+
+  res.status(404).render('404');
 });
 
 app.get('/recommend', function (req, res) {
@@ -65,14 +63,11 @@ app.get('/recommend', function (req, res) {
 app.post('/recommend', function (req, res) {
   const restaurant = req.body;
   restaurant.id = uuid.v4();
-  const filePath = path.join(__dirname, 'data', 'restaurants.json');
+  const restaurants = resData.getStoredRestaurants();
 
-  const fileData = fs.readFileSync(filePath);
-  const storedRestaurants = JSON.parse(fileData);
+  restaurants.push(restaurant);
 
-  storedRestaurants.push(restaurant);
-
-  fs.writeFileSync(filePath, JSON.stringify(storedRestaurants));
+  resData.storeRestaurants(restaurants);
 
   res.redirect('/confirm');
 });
@@ -83,6 +78,14 @@ app.get('/confirm', function (req, res) {
 
 app.get('/about', function (req, res) {
   res.render('about');
+});
+
+app.use(function (req, res) {
+  res.status(404).render('404');
+});
+
+app.use(function (error, req, res, next) {
+  res.status(500).render('500');
 });
 
 app.listen(3000);

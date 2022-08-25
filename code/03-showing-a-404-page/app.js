@@ -56,6 +56,8 @@ app.get('/restaurants/:id', function (req, res) {
   //     restaurant.id === restaurantId &&
   //     res.render('restaurant-detail', { restaurant })
   // );
+
+  res.render('404');
 });
 
 app.get('/recommend', function (req, res) {

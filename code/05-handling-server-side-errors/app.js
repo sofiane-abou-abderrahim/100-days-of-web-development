@@ -56,6 +56,8 @@ app.get('/restaurants/:id', function (req, res) {
   //     restaurant.id === restaurantId &&
   //     res.render('restaurant-detail', { restaurant })
   // );
+
+  res.render('404');
 });
 
 app.get('/recommend', function (req, res) {
@@ -83,6 +85,14 @@ app.get('/confirm', function (req, res) {
 
 app.get('/about', function (req, res) {
   res.render('about');
+});
+
+app.use(function (req, res) {
+  res.render('404');
+});
+
+app.use(function (error, req, res, next) {
+  res.render('500');
 });
 
 app.listen(3000);
